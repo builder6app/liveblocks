@@ -13,14 +13,32 @@ import { Suspense, useState } from "react";
  * new threads.
  */
 
-function Example({ resolved }: { resolved?: boolean }) {
+function Example({
+  resolved,
+  color,
+}: {
+  resolved?: boolean;
+  color?: "red" | "blue" | "*";
+}) {
+  const metadata: { color?: "blue" | "red" } = {};
+  if (color !== "*") {
+    metadata.color = color;
+  }
+
   const { threads, fetchMore, isFetchingMore, fetchMoreError, hasFetchedAll } =
-    useThreads({ query: { resolved } });
+    useThreads({
+      query: { resolved, metadata },
+    });
 
   return (
     <div className="threads">
       {threads.map((thread) => (
-        <Thread key={thread.id} thread={thread} className="thread" />
+        <Thread
+          key={thread.id}
+          thread={thread}
+          className="thread"
+          style={{ border: `2px solid ${thread.metadata.color}` }}
+        />
       ))}
 
       {fetchMoreError && (
@@ -40,7 +58,15 @@ function Example({ resolved }: { resolved?: boolean }) {
         </button>
       )}
 
-      <Composer className="composer" />
+      <Composer
+        className="composer"
+        metadata={{
+          color:
+            color !== "*"
+              ? color
+              : ["red", "blue", undefined][Math.floor(Math.random() * 3)],
+        }}
+      />
     </div>
   );
 }
@@ -48,6 +74,7 @@ function Example({ resolved }: { resolved?: boolean }) {
 function Room({ room }: { room: string }) {
   const roomId = useExampleRoomId(room);
   const [resolved, setResolved] = useState<boolean | undefined>(false);
+  const [color, setColor] = useState<"red" | "blue" | undefined | "*">("*");
   return (
     <RoomProvider id={roomId}>
       <div>
@@ -67,13 +94,30 @@ function Room({ room }: { room: string }) {
           Unresolved
         </button>
       </div>
+      <div>
+        <button disabled={color === "*"} onClick={() => setColor("*")}>
+          Any
+        </button>
+        <button
+          disabled={color === undefined}
+          onClick={() => setColor(undefined)}
+        >
+          Without color
+        </button>
+        <button disabled={color === "red"} onClick={() => setColor("red")}>
+          Red
+        </button>
+        <button disabled={color === "blue"} onClick={() => setColor("blue")}>
+          Blue
+        </button>
+      </div>
       <ErrorBoundary
         fallback={
           <div className="error">There was an error while getting threads.</div>
         }
       >
         <ClientSideSuspense fallback={<Loading />}>
-          <Example resolved={resolved} />
+          <Example resolved={resolved} color={color} />
         </ClientSideSuspense>
       </ErrorBoundary>
     </RoomProvider>
