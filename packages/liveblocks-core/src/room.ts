@@ -2872,7 +2872,7 @@ export function createRoom<
       query = objectToQuery(options.query);
     }
 
-    const PAGE_SIZE = 50;
+    const PAGE_SIZE = 2;
 
     try {
       const result = await httpClient2.get<{

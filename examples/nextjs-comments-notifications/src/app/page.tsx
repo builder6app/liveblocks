@@ -9,7 +9,7 @@ import { Composer, Thread } from "@liveblocks/react-ui";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useExampleRoomId } from "../example.client";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 /**
  * Displays a list of threads, along with a composer for creating
@@ -32,6 +32,10 @@ function Example({
     useUserThreads_experimental({
       query: { resolved, metadata },
     });
+
+  useEffect(() => {
+    setTimeout(() => fetchMore(), 0);
+  });
 
   return (
     <div className="threads">

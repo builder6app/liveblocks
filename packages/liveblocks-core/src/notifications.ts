@@ -101,7 +101,7 @@ export function createNotificationsApi<M extends BaseMetadata>({
   const httpClient = new HttpClient(baseUrl, fetchPolyfill, getAuthValue);
 
   async function getInboxNotifications(options?: GetInboxNotificationsOptions) {
-    const PAGE_SIZE = 50;
+    const PAGE_SIZE = 2;
 
     const json = await httpClient.get<{
       threads: ThreadDataPlain<M>[];
@@ -209,7 +209,7 @@ export function createNotificationsApi<M extends BaseMetadata>({
       query = objectToQuery(options.query);
     }
 
-    const PAGE_SIZE = 50;
+    const PAGE_SIZE = 2;
 
     const json = await httpClient.get<{
       threads: ThreadDataPlain<M>[];
